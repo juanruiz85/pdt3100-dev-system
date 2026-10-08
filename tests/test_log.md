@@ -52,3 +52,39 @@
 - `src/hello_test.hex` - Intel HEX con formato DOS (1.8 KB)
 - `src/hello_test.asm` - Source en ensamblador NASM (referencia)
 - `tools/exe2hex.py` - Actualizado para soportar .EXE y .COM
+
+---
+
+## 2026-10-08 - Prueba de carga de hello_test.hex
+
+### Resultado: ❌ FALLO - El dispositivo borró el NVM y no arrancó nuestra app
+
+### Qué pasó:
+1. El PDT 3100 inició y mostró "ERASING NVM" ← esto BORRÓ la EEPROM
+2. Después mostró "NVM Loader 1.20-00" (versión diferente al MAME ROM que era 1.02-00)
+3. Mostró menú "Protocol" con opciones: Standard, 2-Way, Spectrum
+4. Usuario seleccionó "Standard"
+5. Pidió opciones de velocidad y comunicación
+6. Mostró "Connecting to host"
+
+### Análisis del fallo:
+El problema es que nuestro hello_test.hex era un simple .COM (651 bytes) convertido a HEX.
+PERO el PDT 3100 no ejecuta .COM sueltos - espera una IMAGEN COMPLETA del NVM que incluye:
+
+1. Boot sector (formato "MSI BOOT" con BPB)
+2. Tabla FAT12
+3. Root directory con entradas de archivos
+4. CONFIG.SYS que especifica qué programas cargar
+5. Los programas .EXE reales (MAIN.EXE, SCAN3000.EXE)
+
+El runtime.hex original (147KB) tiene TODA esta estructura. Nuestro hello_test.hex
+(1.8KB) solo tenía el código binario del .COM sin estructura de filesystem.
+
+### Información descubierta:
+- NVM Loader del dispositivo: versión 1.20-00 (más nueva que la del MAME ROM: 1.02-00)
+- El NVM Loader tiene menú de Protocol: Standard, 2-Way, Spectrum
+- Puede descargar aplicaciones via red (Spectrum), 2-Way modem, o serial (Standard)
+
+### Próximo paso:
+1. URGENTE: Flashear runtime.hex original para recuperar el dispositivo
+2. Crear imagen NVM completa con filesystem FAT12 + boot sector + CONFIG.SYS + nuestro programa
