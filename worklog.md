@@ -19,3 +19,22 @@ Work Log:
 Stage Summary:
 - Repo creado y estructurado
 - Próximos pasos: descargar MSVC 1.52c de archive.org y compilar hello.c
+
+---
+Task ID: 2
+Agent: main
+Task: Búsqueda del ADK de Symbol Series 3000
+
+Work Log:
+- Buscado en archive.org, GitHub, Zebra.com, IBM, foros
+- Encontrado IBM DCConnect menciona LWP4_02_07.ZIP y BLDINIT
+- Encontrado A1SI (ez-snap) - empresa que desarrolló apps para PDT 3100 (1997-2001)
+- ADK versión 4.42 mencionada en IBM (circa 2004)
+- Symbol Developer Zone (software.symbol.com/devzone) está offline
+- Zebra support.zebra.com tiene artículos de Series 3000 pero no descargas del ADK
+- YUMPU tiene el Programmer's Guide completo (386p) pero no el software
+
+Stage Summary:
+- ADK NO disponible públicamente
+- Alternativa: crear sistema custom con MSVC 1.52c + headers C + exe2hex.py
+- Documentado todo en docs/ADK_SEARCH_LOG.md
