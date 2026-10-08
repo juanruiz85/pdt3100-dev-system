@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 *.obj
 *.exe
+# Excluir .hex excepto en src/ (son deliverables)
 *.hex
-!tools/sendhex/*.exe
+!src/*.hex
+!download/*.hex
 .DS_Store
