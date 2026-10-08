@@ -38,3 +38,25 @@ Stage Summary:
 - ADK NO disponible públicamente
 - Alternativa: crear sistema custom con MSVC 1.52c + headers C + exe2hex.py
 - Documentado todo en docs/ADK_SEARCH_LOG.md
+
+---
+Task ID: 3
+Agent: main
+Task: Compilar programa de prueba "Hello World"
+
+Work Log:
+- Intentado instalar bcc (Bruce's C Compiler) via apt → sin permisos root
+- Clonado dev86 desde GitHub (github.com/lkundrak/dev86)
+- bcc compilado parcialmente (errores con gcc moderno en bcc-cpp)
+- NASM no disponible (sin permisos root)
+- Creado .COM manualmente con Python: código 8086 que usa INT 0xA1
+- Convertido .COM a Intel HEX con exe2hex.py actualizado
+- Archivos generados:
+  - src/hello_test.com (651 bytes)
+  - src/hello_test.hex (1.8 KB, formato DOS con CRLF + Ctrl-Z)
+  - src/hello_test.asm (source NASM de referencia)
+
+Stage Summary:
+- Programa de prueba creado y convertido a HEX
+- Pendiente: cargar al PDT 3100 y verificar
+- El código usa INT 0xA1 (AH=0x0E para display, AH=0x01 para teclado)

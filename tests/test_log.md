@@ -29,3 +29,26 @@
 | 6 | Documentar funciones del BIOS desde MAME ROM | Pendiente |
 | 7 | Implementar librería libbios (wrapper de INT calls) | Pendiente |
 | 8 | Crear programa de ejemplo con scanner láser | Pendiente |
+
+---
+
+## 2026-10-08 - Compilación de prueba con bcc/NASM
+
+| # | Prueba | Resultado | Notas |
+|---|---|---|---|
+| 1 | Instalar bcc (Bruce's C Compiler) via apt | ❌ | Sin permisos de root |
+| 2 | Clonar y compilar dev86 (bcc) desde GitHub | ⚠️ | bcc compilado pero bcc-cpp falló (errores de gcc moderno) |
+| 3 | Instalar NASM | ❌ | Sin permisos de root |
+| 4 | Crear .COM manualmente con Python | ✅ | hello_test.com (651 bytes, 395 bytes de código) |
+| 5 | Convertir .COM a Intel HEX | ✅ | hello_test.hex (1.8 KB, 43 líneas, formato DOS correcto) |
+
+### Próximas pruebas:
+- Cargar hello_test.hex al PDT 3100 via SENDHEX
+- Verificar que aparezca "Hello from Python!" en pantalla
+- Si funciona: comenzar a implementar más funciones del BIOS
+
+### Archivos generados:
+- `src/hello_test.com` - Ejecutable .COM de 16-bit (651 bytes)
+- `src/hello_test.hex` - Intel HEX con formato DOS (1.8 KB)
+- `src/hello_test.asm` - Source en ensamblador NASM (referencia)
+- `tools/exe2hex.py` - Actualizado para soportar .EXE y .COM
