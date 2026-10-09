@@ -161,3 +161,23 @@ Creado `tools/nvm_from_scratch.py` que construye una imagen NVM completa:
 - `src/hello_scratch.hex` - imagen NVM lista para cargar (416,192 bytes)
 
 ### Próximo paso: cargar hello_scratch.hex al PDT 3100
+
+---
+
+## 2026-10-09 - Renombrar archivo a hello.hex
+
+### Pregunta del usuario:
+¿Afecta renombrar hello_scratch.hex a hello.hex?
+
+### Respuesta:
+NO afecta en absoluto. El nombre del archivo en la PC es irrelevante para el PDT 3100.
+SENDHEX lee el archivo .hex y envía su contenido via serial al dispositivo.
+El dispositivo recibe los bytes del Intel HEX y los escribe al NVM.
+
+El nombre del archivo solo importa para:
+1. Que SENDHEX lo encuentre (debe coincidir el parámetro: sendhex hello 19200 2)
+2. Windows 98 no soporta nombres largos en FAT12/FAT16 (máx 8.3 = 8 chars + 3 ext)
+
+### Renombrar a hello.hex es CORRECTO:
+- sendhex hello 19200 2 ← busca "hello.hex" en el directorio actual
+- Funciona en Windows 98 (nombre 8.3: "hello" = 5 chars, ".hex" = 3 chars ext)
