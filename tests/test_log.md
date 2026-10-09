@@ -139,3 +139,25 @@ completamente nueva con:
 - CONFIG.SYS simple
 - Nuestro programa como .EXE
 - Sin depender del runtime.hex original
+
+---
+
+## 2026-10-09 - NVM desde cero
+
+### Nuevo enfoque: crear imagen NVM sin depender del runtime.hex original
+
+Creado `tools/nvm_from_scratch.py` que construye una imagen NVM completa:
+1. Header (80 bytes) - copiado del original
+2. Far pointer table (224 bytes) - con punteros a nuestros recursos
+3. CONFIG.SYS simplificado: "shell=a:shell.com b:hello.exe"
+4. Boot sector "MSI BOOT" con BPB (mismos parámetros que original)
+5. FAT12 con entry para HELLO.EXE (cluster 2, end of chain)
+6. Root directory con entrada para HELLO.EXE
+7. Data area con nuestro programa como MZ EXE
+8. Padding a 147104 bytes (mismo tamaño que original)
+
+### Archivos generados:
+- `tools/nvm_from_scratch.py` - constructor de NVM desde cero
+- `src/hello_scratch.hex` - imagen NVM lista para cargar (416,192 bytes)
+
+### Próximo paso: cargar hello_scratch.hex al PDT 3100
