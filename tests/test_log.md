@@ -260,3 +260,29 @@ El protocolo Standard probablemente usa XMODEM (CONFIG.SYS carga xmodem.sys).
 ### Próximo paso:
 Probar usar el NVM Loader (modo Standard) para descargar un archivo
 individual, en lugar de usar el Program Loader (que escribe el NVM completo).
+
+---
+
+## 2026-10-09 - Nueva estrategia: NVM Loader via serial
+
+### Plan:
+1. Flashear NVM inválido → dispositivo entra al NVM Loader
+2. Usar el NVM Loader (Standard protocol) para descargar archivo individual
+3. El NVM Loader podría NO verificar CRC (es un loader, no un verificador)
+
+### Herramientas para Windows 11:
+- PuTTY: conexión serial (para ver mensajes del NVM Loader)
+- Tera Term: conexión serial + transferencia XMODEM (recomendado)
+- ExtraPuTTY: PuTTY con soporte XMODEM
+
+### Configuración serial:
+- Puerto: COM2 (o el del cradle)
+- Baud: 19200
+- Data: 7 bits
+- Parity: Odd
+- Flow: Xon/Xoff
+
+### Estado:
+- El usuario intentó conectarse con PuTTY y vio "algo de address"
+- Probablemente el NVM Loader pide una dirección IP o configuración de red
+- Necesitamos entender qué protocolo usa el NVM Loader
