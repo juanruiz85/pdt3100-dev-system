@@ -198,3 +198,28 @@ Creado un HEX que es IDÉNTICO al runtime.hex original EXCEPTO por
 
 - Si funciona → NO hay verificación completa, podemos modificar
 - Si falla    → SÍ hay CRC/hash, necesitamos encontrar y recalcular
+
+---
+
+## 2026-10-09 - test_1byte.hex: FALLO (ERASING NVM)
+
+### Resultado: ❌ ERASING NVM
+
+### CONCLUSIÓN DEFINITIVA:
+El BIOS SÍ hace verificación de integridad completa del NVM.
+Cambiar UN SOLO BYTE en padding (área no crítica) causa rechazo.
+Esto confirma: hay un CRC o hash almacenado en el BIOS (chips U8/U9).
+
+### Lo que sabemos:
+1. El BIOS verifica el NVM completo (no solo partes específicas)
+2. Cambiar 1 byte → verificación falla → ERASING NVM → NVM Loader
+3. El algoritmo de verificación está en el BIOS (MAME ROM U8/U9)
+4. El CRC esperado está hardcodeado en el BIOS
+5. Tabla CRC16-CCITT encontrada en U8 @ 0x19D13
+6. Strings "ROM CRC: NVM CRC:" y "Verifying NVM Image" en U9
+
+### Lo que necesitamos hacer:
+1. Analizar el código del BIOS (U8/U9) que hace la verificación
+2. Encontrar dónde está el CRC esperado
+3. Calcular el CRC correcto para nuestro NVM modificado
+4. O encontrar el algoritmo exacto y recalcular
