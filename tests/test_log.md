@@ -181,3 +181,20 @@ El nombre del archivo solo importa para:
 ### Renombrar a hello.hex es CORRECTO:
 - sendhex hello 19200 2 ← busca "hello.hex" en el directorio actual
 - Funciona en Windows 98 (nombre 8.3: "hello" = 5 chars, ".hex" = 3 chars ext)
+
+---
+
+## 2026-10-09 - hello_scratch.hex: MISMO FALLO (ERASING NVM)
+
+### Resultado: ❌ "ERASING NVM" al hacer Cold Boot
+
+Esto confirma: el BIOS verifica el contenido del NVM después de escribirlo
+y ANTES de bootear. Si la verificación falla, borra el NVM y entra
+al NVM Loader.
+
+### Prueba crítica: test_1byte.hex
+Creado un HEX que es IDÉNTICO al runtime.hex original EXCEPTO por
+1 solo byte en el área de padding (offset 0x23E9F: 0x00→0x01).
+
+- Si funciona → NO hay verificación completa, podemos modificar
+- Si falla    → SÍ hay CRC/hash, necesitamos encontrar y recalcular
