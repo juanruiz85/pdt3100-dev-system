@@ -88,3 +88,26 @@ El runtime.hex original (147KB) tiene TODA esta estructura. Nuestro hello_test.h
 ### Próximo paso:
 1. URGENTE: Flashear runtime.hex original para recuperar el dispositivo
 2. Crear imagen NVM completa con filesystem FAT12 + boot sector + CONFIG.SYS + nuestro programa
+
+---
+
+## 2026-10-08 - Creación de NVM Builder + imagen NVM completa
+
+### Hallazgo CRÍTICO:
+El PDT 3100 NO hace verificación CRC. El hello_test.hex se transfirió y escribió
+al NVM correctamente (vimos "ERASING NVM"). El problema fue que enviamos un .COM
+suelto (sin filesystem) en lugar de una imagen NVM completa.
+
+### Solución: NVM Builder
+Creado `tools/nvm_builder.py` que:
+1. Toma el runtime.hex original como BASE (con filesystem FAT12 completo)
+2. Reemplaza el contenido de MAIN.EXE con nuestro programa
+3. Mantiene toda la estructura del filesystem intacta
+4. Genera Intel HEX con formato DOS correcto
+
+### Archivos generados:
+- `tools/nvm_builder.py` - herramienta para construir imágenes NVM
+- `src/hello_bare.bin` - código 8086 puro (359 bytes, sin PSP)
+- `src/hello_nvm.hex` - imagen NVM completa (416 KB, mismo tamaño que original)
+
+### Próximo paso: cargar hello_nvm.hex al PDT 3100 y probar
