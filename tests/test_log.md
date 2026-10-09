@@ -223,3 +223,40 @@ Esto confirma: hay un CRC o hash almacenado en el BIOS (chips U8/U9).
 2. Encontrar dónde está el CRC esperado
 3. Calcular el CRC correcto para nuestro NVM modificado
 4. O encontrar el algoritmo exacto y recalcular
+
+---
+
+## 2026-10-09 - Análisis de CRC: resultados
+
+### Hallazgo DEFINITIVO:
+**El BIOS hace verificación CRC completa del NVM.**
+- Cambiar 1 byte en padding → ERASING NVM → rechazado
+- No podemos modificar el NVM sin recalcular el CRC
+
+### Análisis del CRC:
+- Tabla CRC16-CCITT encontrada en MAME ROM U8 @ 0x19D13 (poly 0x1021)
+- Strings "ROM CRC: NVM CRC:" y "Verifying NVM Image" en U9
+- CRC16-CCITT (init=0xFFFF) del runtime.bin = 0x33D8
+- CRC16-CCITT (init=0x0000) = 0x8B84
+- Buscado en U8/U9: solo falsos positivos (instrucciones comunes)
+- Probado con 10+ init values y poly reflected: sin matches únicos
+
+### PROBLEMA: Versiones diferentes
+- MAME ROM BIOS: v1.02-00 (NVM Loader 1.02-00)
+- BIOS del usuario: v1.20-00 (NVM Loader 1.20-00)
+- El CRC esperado está en el BIOS del usuario, NO en el MAME ROM
+- Sin el BIOS exacto del usuario, no podemos encontrar el CRC
+
+### Nueva estrategia: usar el NVM Loader
+El dispositivo muestra "NVM Loader 1.20-00" con menú Protocol:
+- Standard (serial)
+- 2-Way (modem)
+- Spectrum (radio)
+
+El NVM Loader descarga aplicaciones INDIVIDUALES (no imagen completa).
+Quizás no hace verificación CRC (es un loader, no un verificador).
+El protocolo Standard probablemente usa XMODEM (CONFIG.SYS carga xmodem.sys).
+
+### Próximo paso:
+Probar usar el NVM Loader (modo Standard) para descargar un archivo
+individual, en lugar de usar el Program Loader (que escribe el NVM completo).
