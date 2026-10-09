@@ -111,3 +111,31 @@ Creado `tools/nvm_builder.py` que:
 - `src/hello_nvm.hex` - imagen NVM completa (416 KB, mismo tamaño que original)
 
 ### Próximo paso: cargar hello_nvm.hex al PDT 3100 y probar
+
+---
+
+## 2026-10-09 - Prueba de hello_nvm.hex (imagen NVM con MAIN.EXE reemplazado)
+
+### Resultado: ❌ FALLO - Mismo comportamiento que hello_test.hex
+
+### Qué pasó:
+- El dispositivo mostró "ERASING NVM"
+- Luego pasó a "NVM Loader 1.20-00"
+- Mismo comportamiento que antes: el NVM se borra pero la app no arranca
+
+### Análisis:
+Modificar el runtime.hex original (reemplazando MAIN.EXE) NO funciona.
+El problema podría ser:
+1. El BIOS SÍ verifica algo (no CRC, pero quizás checksum o tamaño)
+2. La estructura del MZ EXE que generamos no es compatible
+3. El shell.com (en drive A:) no puede cargar nuestro EXE
+4. Hay dependencias en el overlay/librería que MAIN.EXE necesita
+
+### NUEVO ENFOQUE: Crear imagen NVM desde cero
+En lugar de modificar el runtime.hex existente, crear una imagen NVM
+completamente nueva con:
+- Boot sector MSI BOOT con BPB
+- FAT12 filesystem creado desde cero
+- CONFIG.SYS simple
+- Nuestro programa como .EXE
+- Sin depender del runtime.hex original
